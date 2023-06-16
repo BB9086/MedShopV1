@@ -1,0 +1,187 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  font-size: 14px;
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+   /* padding-bottom: 24px;*/
+     background-color: whitesmoke;
+    /*background-image: url('/images/backgorundimage2.jpg');
+    background-repeat: no-repeat;*/
+}
+
+/*.footer {
+  position: absolute;
+  bottom: -250px;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;*/ /* Vertically center the text there */
+/*}*/
+
+.imageThumbnail{
+    height:200px;
+    width:auto;
+}
+
+/*.dropdown {
+    position: relative;
+    display: inline-block;
+}*/
+/*.dropdown-content {
+    display: none;*/
+    /*position: absolute;*/
+    /*position:fixed;
+    background-color: #f1f1f1;
+    min-width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}*/
+
+/*.dropdown:hover .dropdown-content {
+    display: block;
+}*/
+
+/*https://stackoverflow.com/questions/38202399/bring-modal-to-front*/
+.popup {
+    /*height:500px;*/
+    width: 500px;
+    display: none;
+    position: absolute;
+    border-style: groove;
+    border-width: 2px;
+    padding: 0px;
+    font-size: 40%;
+    transform: translate(-70%, -70);
+    -ms-transform: translate(-70%, -70%);
+    background-color: #91cff6;
+   /* position: fixed;*/ /* Stay in place front is invalid - may break your css so removed */
+    top: 100%;
+    right: 0%;
+    /*    width: 20%;*/
+    overflow: auto; /* Enable scroll if needed */
+    z-index: 9999; /* Sit on top - higher than any other z-index in your site*/
+  /*  margin-left: -10px;*/
+}
+
+.content {
+    margin-top: 20px;
+    
+}
+
+.sticky {
+    position: sticky;
+    top: 0px;
+    width: 100%;
+}
+
+    .sticky + .content {
+        padding-top: 60px;
+    }
+
+.headerContainerWrapper {
+    z-index: 1;
+}
+
+
+/*.content {
+    padding-top: 60px;
+}
+
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+    .sticky + .content {
+        padding-top: 60px;
+    }*/
+
+@media only screen and (max-width: 574px) {
+   /* @*https://stackoverflow.com/questions/59379500/fixed-navbar-hides-anchor-position-of-local-links/59380086#59380086*@*/
+    .anchor_offset::before {
+        display: block;
+        content: ' ';
+        height: 6em;
+        margin-top: -6em;
+        width: 100%;
+        visibility: hidden;
+    }
+}
+
+/*@media (max-width: 974px) and (min-width: 576px) {*/
+  
+    /*li a {
+        display: block;
+        background-color: #dddddd;
+    }*/
+/*}*/
+
+/*kada se prikazuje navbar-toggler skloni padding*/
+@media (max-width: 974px) {
+    .fa-envelope {
+       padding: 0px;
+    }
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.responsive {
+    width: 100%;
+    height: auto;
+}

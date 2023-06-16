@@ -1,0 +1,61 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<form asp-action="EditCategory" method="post" class="mt-3">
+    <div asp-validation-summary="All" class="text-danger">
+    </div>
+
+    <div class="form-group row">
+
+        <input asp-for="CategoryId" class="form-control" value="@Model.CategoryId" hidden>
+
+    </div>
+    <div class="form-group row">
+
+        <input asp-for="StoreType" class="form-control" value="@Model.StoreType" hidden>
+
+    </div>
+    
+
+    <div class="form-group row">
+       @* <label asp-for="CategoryName" class="col-sm-2 col-form-label"></label>*@
+        <label class="col-sm-2 col-form-label">Ime kategorije</label>
+        <div class="col-sm-10">
+            <input asp-for="CategoryName" class="form-control" placeholder="Ime kategorije">
+            <span asp-validation-for="CategoryName" class="text-danger"></span>
+        </div>
+    </div>
+   
+
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary" style="width:auto">
+                Izmeni kategoriju
+            </button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script src="~/js/slideshow.js"></script>
+    <script src="~/js/slideshowTimeChange.js"></script>
+    <script src="~/js/navigateToProductsPage.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
+}@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}

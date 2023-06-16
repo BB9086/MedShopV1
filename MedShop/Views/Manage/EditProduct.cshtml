@@ -1,0 +1,139 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<form enctype="multipart/form-data" asp-action="EditProduct" method="post" class="mt-3">
+    <div asp-validation-summary="All" class="text-danger">
+    </div>
+
+    <div class="form-group row">
+
+        <input asp-for="ProductId" class="form-control" value="@Model.ProductId" hidden>
+
+    </div>
+    <div class="form-group row">
+
+        <input asp-for="ProductKey" class="form-control" value="@Model.ProductKey" hidden>
+
+    </div>
+    <div class="form-group row">
+
+        <input asp-for="StoreType" class="form-control" value="@Model.StoreType" hidden>
+
+    </div>
+    <div class="form-group row">
+
+        <input asp-for="CategoryType" class="form-control" value="@Model.CategoryType" hidden>
+
+    </div>
+
+
+    <div class="form-group row">
+       @* <label asp-for="Name" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Ime proizvoda</label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="Name" class="form-control" placeholder="Ime proizvoda">
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="QuantityOfProduct" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Težina proizvoda</label>
+        <div class="col-sm-9  col-lg-10">
+            <input asp-for="QuantityOfProduct" class="form-control" placeholder="Težina proizvoda">
+            <span asp-validation-for="QuantityOfProduct" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        @* <label asp-for="TotalQuantity_Kg" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Ukupna količina (kg)</label>
+        <div class="col-sm-9  col-lg-10">
+            <input asp-for="TotalQuantity_Kg" class="form-control" placeholder="Ukupna količina u magacinu (kg)">
+            <span asp-validation-for="TotalQuantity_Kg" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="Price" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Cena</label>
+        <div class="col-sm-9  col-lg-10">
+            <input asp-for="Price" class="form-control" placeholder="Cena">
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="CurrentPrice" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Trenutna cena</label>
+        <div class="col-sm-9  col-lg-10">
+            <input asp-for="CurrentPrice" class="form-control" placeholder="Trenutna cena">
+            <span asp-validation-for="CurrentPrice" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="Producer" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Proizvođač</label>
+        <div class="col-sm-9  col-lg-10">
+            <input asp-for="Producer" class="form-control" placeholder="Proizvođač">
+            <span asp-validation-for="Producer" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        @*<label asp-for="Photo" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Slika proizvoda</label>
+        <img class="col-sm-2  col-lg-2" src="@Url.Content(@Model.ImageSource)"
+             asp-append-version="true" />
+        <input asp-for="ImageSource" class="form-control" hidden>
+        <br />
+        <div class="col-sm-7  col-lg-8">
+            <div class="custom-file">
+                <input asp-for="Photo" class="form-control custom-file-input">
+                <label class="custom-file-label">Izaberite sliku...</label>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+      @*  <label asp-for="Place" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+       <label class="col-sm-3 col-lg-2 col-form-label">Lokacija</label>
+        <div class="col-sm-9  col-lg-10">
+            <input asp-for="Place" class="form-control" placeholder="Lokacija proizvođača">
+            <span asp-validation-for="Place" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+      @*  <label asp-for="ProductDescription" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Opis proizvoda</label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="ProductDescription" class="form-control" placeholder="Opis proizvoda">
+            <span asp-validation-for="ProductDescription" class="text-danger"></span>
+        </div>
+    </div>
+
+
+
+
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary" style="width:auto">
+                Izmeniti proizvod
+            </button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script src="~/js/slideshow.js"></script>
+    <script src="~/js/slideshowTimeChange.js"></script>
+    <script src="~/js/navigateToProductsPage.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
+}

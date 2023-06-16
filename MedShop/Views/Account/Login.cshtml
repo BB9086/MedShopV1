@@ -1,0 +1,65 @@
+﻿@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login page";
+}
+
+
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>Prijavite se</h1>
+        <form method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+            @*    <label asp-for="Email"></label>*@
+                <label>Korisničko ime (Email)</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+               @* <label asp-for="Password"></label>*@
+               <label>Lozinka</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<div class="checkbox">
+            <label asp-for="RememberMe">
+                <input asp-for="RememberMe" />
+                @Html.DisplayNameFor(m=>m.RememberMe)
+            </label>
+             </div>*@
+
+                <div class="form-check m-1">
+
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label class="form-check-label" asp-for="RememberMe">
+                        @Html.DisplayNameFor(m => m.RememberMe)
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Prijavite se</button>
+            <div style="margin-top:10px;">
+                <a asp-action="ForgotPassword" asp-controller="Account">Zaboravili ste lozinku?</a>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <h1>Eksterno prijavljivanje</h1>
+        <hr />
+        @if (Model.ExternalLogins.Count == 0)
+        {
+            <div>No external logins configured</div>
+        }
+        else
+        {
+            <form method="post" asp-action="ExternalLogin" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl">
+                @foreach (var provider in Model.ExternalLogins)
+                {
+                    <button type="submit" name="provider" value="@provider.Name" class="btn btn-primary" title="Login using your @provider.DisplayName account">@provider.Name</button>
+                }
+            </form>
+        }
+    </div>
+</div>

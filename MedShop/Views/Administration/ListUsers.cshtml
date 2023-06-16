@@ -1,0 +1,80 @@
+﻿@model List<ApplicationUser>
+
+@{
+    ViewData["Title"] = "List od All Users page";
+}
+
+<h1>Korisnici</h1>
+
+@if (Model.Any())
+{
+    <a asp-action="Register" asp-controller="Account"
+       class="btn btn-primary mb-3" style="width:auto">
+        Dodaj novog korisnika
+    </a>
+
+    foreach (var user in Model)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                Korisnicki Id : @user.Id
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@user.UserName</h5>
+            </div>
+            <div class="card-footer">
+                <form method="post" asp-action="DeleteUser" asp-controller="Administration" asp-route-id="@user.Id">
+                    <a asp-action="EditUser" asp-controller="Administration" asp-route-id="@user.Id" class="btn btn-primary">Izmeniti</a>
+                    <span style="display:none" id="confirmDeleteSpan_@user.Id">
+                        <span>Da li ste sigurni da želite da izbrišete proizvod?</span>
+                        <button type="submit" class="btn btn-danger" @*onclick="return confirm('Are you sure you want to delete user: @user.UserName')"*@>Da</button>
+                        <a href="#" class="btn btn-primary" onclick="confirmDelete('@user.Id',false)">Ne</a>
+                    </span>
+                    <span id="deleteSpan_@user.Id">
+                        <a href="#" class="btn btn-danger" onclick="confirmDelete('@user.Id',true)">Izbrisati</a>
+                    </span>
+                </form>
+            </div>
+        </div>
+    }
+
+}
+else
+{
+    <div class="card">
+        <div class="card-header">
+            Još nisu kreirani korisnici
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">
+              Koristite taster ispod da biste kreirali korisnika
+            </h5>
+            <a class="btn btn-primary" style="width:auto"
+               asp-controller="Account" asp-action="Register">
+                Add new user
+            </a>
+        </div>
+    </div>
+}
+
+@section Scripts{ 
+
+    <script>
+       
+
+            function confirmDelete(uniqueId, isDeleteClicked) {
+                var deleteSpan = 'deleteSpan_' + uniqueId;
+                var confirmDeleteSpan = 'confirmDeleteSpan_' + uniqueId;
+
+                if (isDeleteClicked) {
+                    $('#' + deleteSpan).hide();
+                    $('#' + confirmDeleteSpan).show();
+                } else {
+                    $('#' + deleteSpan).show();
+                    $('#' + confirmDeleteSpan).hide();
+                }
+            }
+       
+    </script>
+
+}

@@ -1,0 +1,234 @@
+﻿* {
+    box-sizing: border-box
+}
+
+/*body {
+            font-family: "Lato", sans-serif;
+            background-color: #DDE3FD;
+        }*/
+
+/* Style the tab */
+.tab li a {
+    text-decoration: none;
+    font-size: 28px;
+}
+
+
+/* Change background color of buttons on hover */
+.tab li:hover {
+    background-color: lightgray;
+}
+
+
+/*img {
+            float: left;
+            max-width: 25px;
+            width: 100%;
+            margin-right: 4px;
+            border-radius: 50%;
+        }*/
+
+img.right {
+    float: right;
+    margin-left: 5px;
+    margin-right: 0;
+    border-radius: 50%;
+}
+
+img.left {
+    float: left;
+    margin-left: 5px;
+    margin-right: 0;
+    border-radius: 50%;
+}
+
+img.online {
+    display: inline;
+    max-width: 20px;
+    margin-left: 5px;
+    margin-right: 0;
+    border-radius: 50%;
+}
+
+span.right {
+    float: right;
+}
+
+#onlineUsersList img {
+    float: left;
+    max-width: 40px;
+    width: 100%;
+    margin-right: 6px;
+    margin-top: 6px;
+    border-radius: 50%;
+}
+
+.open-button {
+    background-color: dodgerblue;
+    color: white;
+    padding: 8px 10px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.8;
+    position: fixed;
+    bottom: 23px;
+    right: 28px;
+    width: 380px;
+    height: 30px;
+    text-align: center;
+    display: none;
+}
+
+/* The popup chat - hidden by default */
+.chatPopup {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    right: 15px;
+    border: 3px solid #f1f1f1;
+    overflow: auto; /* Enable scroll if needed */
+    z-index: 9999; /* Sit on top - higher than any other z-index in your site*/
+}
+
+/* Add styles to the form container */
+.form-container {
+    max-width: 400px;
+    padding: 10px;
+    background-color: white;
+}
+
+
+
+/* When the textarea gets focus, do something */
+#messageInput:focus {
+    background-color: #DBE5FF;
+    border-radius: 5px;
+    border: 1px solid #0247FE;
+}
+
+
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+    opacity: 1;
+}
+
+.cardChat {
+    height: 350px;
+    border-radius: 15px !important;
+    background-color: #DEE9FC;
+}
+
+.noti-content span {
+    float: left;
+}
+
+.listNotiContent {
+    color: #000;
+}
+
+    .listNotiContent a {
+        text-decoration: none;
+    }
+
+    .listNotiContent img {
+        /*margin-top: 1px;*/
+    }
+
+#chat-with-id span {
+    border-radius: 25px;
+    background-color: #DBE5FF;
+}
+
+#chat-with-id img {
+    margin-top: 2px;
+}
+
+#messageListId img {
+    max-width: 35px;
+}
+
+
+#messageListId li {
+    padding: 18px 1px;
+}
+
+.text-right {
+    float: right;
+}
+
+.text-left {
+    float: left;
+}
+
+.messageContainer.right {
+    border: 1px solid #DEE9FC;
+    background-color: #6395F2;
+    border-radius: 5px;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.messageContainer.left {
+    border: 1px solid #DEE9FC;
+    background-color: #90A0B2;
+    border-radius: 5px;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.messageContainer::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.messageContainer img.left {
+    float: left;
+    max-width: 25px;
+    margin-left: 0px;
+    border-radius: 50%;
+    margin-top: 8px;
+}
+
+.messageContainer img.right {
+    float: right;
+    max-width: 25px;
+    margin-right: 0px;
+    border-radius: 50%;
+    margin-top: 8px;
+}
+
+ul.noti-content {
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    right: 180px;
+    border-radius: 4px;
+    top: 60px;
+    display: none;
+    border: 1px solid #9E988B;
+    overflow: auto; /* Enable scroll if needed */
+    z-index: 9999; /* Sit on top - higher than any other z-index in your site*/
+}
+
+@media only screen and (max-width: 600px) {
+    /* @*https://stackoverflow.com/questions/59379500/fixed-navbar-hides-anchor-position-of-local-links/59380086#59380086*@*/
+    /* The popup chat - hidden by default */
+    .chatPopup {
+        display: none;
+        position: fixed;
+        bottom: 0px;
+        left: 0px;
+        border: none;
+        /*overflow: auto;*/ /* Enable scroll if needed */
+        z-index: 9999; /* Sit on top - higher than any other z-index in your site*/
+        width:100%;
+    }
+
+    .cardChat {
+        width: 100%;
+        height:100%;
+        overflow-x:no-content;
+    }
+}

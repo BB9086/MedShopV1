@@ -1,0 +1,327 @@
+﻿@model List<Product>
+
+@{
+    ViewData["Title"] = "My ShoopingCart";
+    decimal sumOfAllProducts = 0.00m;
+
+    var storesIds = ViewBag.StoresIds;
+    //find unique values of stores in list of stores ids of products!!!
+    var unique_itemsInShoopingCart = new HashSet<int>(storesIds);
+
+    var storeId = -1;
+    if (storesIds.Count >0)
+    {
+       storeId = unique_itemsInShoopingCart.First();
+    }
+}
+
+<link href="~/css/breadcrumb.css" rel="stylesheet" />
+
+<nav arial-label="breadcrumb" style="background-color:whitesmoke">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Moja korpa</li>
+        <li class="breadcrumb-item">Rezervacija</li>
+        <li class="breadcrumb-item">Podaci o kupcu</li>
+        <li class="breadcrumb-item">Podaci o porudžbini</li>
+        <li class="breadcrumb-item">Potvrda porudžbine</li>
+    </ol>
+</nav>
+
+<h1>Moja korpa</h1>
+<hr />
+
+@for (var i = 0; i < Model.Count; i++)
+{
+    var val = Model[i].CurrentPrice * Convert.ToInt32(Model[i].NumberOfSameProductInShoppingCart);
+    sumOfAllProducts += val;
+}
+
+@*<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>*@
+
+<div>
+    <div id="myDiv">
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            <div class="container">
+                <div class="row">
+                    <div class="col-4 col-lg-3" style="margin-top:2px">
+                        <img class="imagesOfProducts" src="@Url.Content(Model[i].ImageSource)"
+                             asp-append-version="true" style="margin-right:5px" />
+                    </div>  
+                    @*<div class="col-4 col-lg-4">
+                        <b>@Model[i].Name</b>
+                    </div>*@
+                <div class="col-8 col-lg-3">
+                    <b>@Model[i].Name</b> <br /> <hr />
+                    <b>Cena:</b> <br /> <div id="currentPrice_@i">@String.Format("{0:n}", Model[i].CurrentPrice) RSD</div>
+                </div>
+                    <div class="col-12 col-lg-6">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-0 col-lg-1"></div>
+
+                                <div class="col-8 col-lg-8" style="padding-left:0px">
+                                    <b>Količina:</b> <br />
+                                    <div>
+                                        @*<form method="get">*@
+                                        <!-- Change the `data-field` of buttons and `name` of input field's for multiple plus minus buttons-->
+                                        <div class="input-group plus-minus-input">
+                                            <div class="input-group-btn">
+                                                <button type="button" id="btnLeftMinus_@i" value="@Model[i].ProductKey" @*class="button hollow circle"*@ class="quantity-left-minus btn btn-danger btn-number" data-quantity="minus" data-field="quantity" min="1">
+                                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                            <input class="input-group-field" type="number" id="quantity_@i" name="quantity" value="@Model[i].NumberOfSameProductInShoppingCart" style="width:30%;">
+                                            <div class="input-group-btn">
+                                                <button type="button" id="btnRightPlus_@i" value="@Model[i].ProductKey" @*class="button hollow circle"*@ class="quantity-right-plus btn btn-success btn-number" data-quantity="plus" data-field="quantity" min="1">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        @*</form>*@
+                                    </div>
+                                </div>
+                                <div class="col-2 col-lg-3">
+                                    <b>Iznos:</b> <br />
+                                    <div id="multiplyColumns_@i">
+                                        @{
+                                            var val = Model[i].CurrentPrice * Convert.ToInt32(Model[i].NumberOfSameProductInShoppingCart);
+                                            //sumOfAllProducts += val;
+                                        }@String.Format("{0:n}", val) RSD
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr width="100%" style="border-color:#6699FF" size="6" />
+                </div>
+
+            </div>
+
+        }
+    </div>
+
+    @*String.Format("0:n", broj) sluzi da prikaze zarez kod brojeva vecih ili jednakih 1000: https://stackoverflow.com/questions/105770/net-string-format-to-add-commas-in-thousands-place-for-a-number*@
+    <div align="right">
+        <div id="sumFooter"><b>Ukupno: @String.Format("{0:n}", sumOfAllProducts) RSD</b></div>
+        <div style="margin-top:2%">
+            @if (unique_itemsInShoopingCart.Count == 1)
+            {
+            <form method="get" asp-action="RezervacijaIPlacanje" asp-controller="home">
+                <button type="submit" name="storeId" value="@storeId"  class="btn btn-primary">
+                    Na Placanje
+                </button>
+            </form>
+                    @*<a asp-controller="home" name="storeId" value="@unique_itemsInShoopingCart" asp-action="RezervacijaIPlacanje" class="btn btn-primary">
+                        Na Placanje
+                    </a>*@
+                    }
+                    else if (unique_itemsInShoopingCart.Count > 1)
+                    {
+                    <a class="btn btn-primary" disabled style="color:white; background-color:lightgrey">
+                        Na Placanje
+                    </a>
+                    <br />
+                    <label style="color:red">You selected products from multiple stores!</label>
+                    }
+
+            </div>
+    </div>
+</div>
+
+
+<style>
+
+    .plus-minus-input {
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+        .plus-minus-input .input-group-field {
+            text-align: center;
+            margin-left: 0.1rem;
+            margin-right: 0.1rem;
+            padding: 0.4rem;
+        }
+
+            .plus-minus-input .input-group-field::-webkit-inner-spin-button,
+            .plus-minus-input .input-group-field ::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                appearance: none;
+            }
+
+        .plus-minus-input .input-group-btn .circle {
+            border-radius: 0%;
+            padding: 0.25em 0.8em;
+        }
+</style>
+
+<script>
+    //jQuery(document).ready(function () {
+    //    // This button will increment the value
+    //    $('[data-quantity="plus"]').click(function (e) {
+    //        // Stop acting like a button
+    //        e.preventDefault();
+    //        // Get the field name
+    //        fieldName = $(this).attr('data-field');
+    //        // Get its current value
+    //        var currentVal = parseInt($('input[name=' + fieldName + ']').val());
+    //        // If is not undefined
+    //        if (!isNaN(currentVal)) {
+    //            // Increment
+    //            $('input[name=' + fieldName + ']').val(currentVal + 1);
+    //        } else {
+    //            // Otherwise put a 0 there
+    //            $('input[name=' + fieldName + ']').val(0);
+    //        }
+    //    });
+    //    // This button will decrement the value till 0
+    //    $('[data-quantity="minus"]').click(function (e) {
+    //        // Stop acting like a button
+    //        e.preventDefault();
+    //        // Get the field name
+    //        fieldName = $(this).attr('data-field');
+    //        // Get its current value
+    //        var currentVal = parseInt($('input[name=' + fieldName + ']').val());
+    //        // If it isn't undefined or its greater than 0
+    //        if (!isNaN(currentVal) && currentVal > 0) {
+    //            // Decrement one
+    //            $('input[name=' + fieldName + ']').val(currentVal - 1);
+    //        } else {
+    //            // Otherwise put a 0 there
+    //            $('input[name=' + fieldName + ']').val(0);
+    //        }
+    //    });
+    //});
+
+
+
+</script>
+
+
+<script>
+    $(window).resize(function () {
+        if ($(window).width() < 768) {
+
+                $(".imagesOfProducts").css('width', '100px');
+            }
+            else {
+                $(".imagesOfProducts").css('width', '200px');
+            }
+    });
+
+    jQuery(document).ready(function () {
+        if ($(window).width() < 768) {
+
+            $(".imagesOfProducts").css('width', '100px');
+        }
+        else {
+            $(".imagesOfProducts").css('width', '200px');
+        }
+    });
+
+</script>
+
+@section Scripts{
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var quantitiy = 0;
+
+            $('.quantity-right-plus').click(function (e) {
+               
+                var x = parseInt($(this).attr('id').toString().split("_")[1]);
+                var productKey = $(this).attr('value').toString();
+                //!!!
+                var currentPrice = $('#currentPrice_' + x).text().split(" ")[0];
+               
+                var quantity = parseInt($('#quantity_' + x).val());
+
+                $('#quantity_' + x).val(quantity + 1);
+              
+                connection.invoke("Announce", currentPrice).catch(function (err) { return console.error(err.toString()); });
+
+                insertNewProduct(productKey);
+
+                $.ajax({
+                    url: "https://localhost:44336/home/GetSortedListItemInShopingCartByProductKey",
+                    method: 'post',
+                    data: { prodKey: productKey },
+                    dataType: "json",
+                    success: function (data) {
+                        debugger
+                        dataNumber = parseInt(data[0]);
+                        if (dataNumber != 0) {
+                            var sumByColumn = parseFloat(parseInt(currentPrice.replace(/,/g, ''), 10) * parseInt(dataNumber)).toFixed(2);
+                            var sumByCol = sumByColumn.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            $('#multiplyColumns_' + x).html(sumByCol + ' RSD');
+                        }
+
+                        $('#sumFooter').html('<b>Ukupno: ' + parseFloat(data[1]).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</b>');
+
+                    },
+                    error: function (err) {
+                        alert("Greskaaaa!!!");
+                    }
+                });
+            });
+
+            $('.quantity-left-minus').click(function (e) {
+
+                var x = parseInt($(this).attr('id').toString().split("_")[1]);
+
+                var productKey = $(this).attr('value').toString();
+                //!!!
+                var currentPrice = $('#currentPrice_' + x).text().split(" ")[0];
+
+                var quantity = parseInt($('#quantity_' + x).val());
+
+                // If is not undefined
+
+                // Increment
+                if (quantity > 0) {
+                    $('#quantity_' + x).val(quantity - 1);
+                    var newQuantity = parseInt($('#quantity_' + x).val());
+
+                    if (newQuantity != 0) {
+                        connection.invoke("RemoveProduct_oneByOne", productKey, currentPrice).catch(function (err) { return console.error(err.toString()); });
+                    }
+                    else {
+                        $('#quantity_' + x).val(1);
+                    }
+
+
+                }
+
+                $.ajax({
+                    url: "https://localhost:44336/home/GetSortedListItemInShopingCartByProductKey",
+                    method: 'post',
+                    data: { prodKey: productKey },
+                    dataType: "json",
+                    success: function (data) {
+                        //debugger
+                        dataNumber = parseInt(data[0]);
+                        if (dataNumber != 0) {
+                            var sumByColumn = parseFloat(parseInt(currentPrice.replace(/,/g, ''), 10) * parseInt(dataNumber)).toFixed(2);
+                            var sumByCol = sumByColumn.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            $('#multiplyColumns_' + x).html(sumByCol + ' RSD');
+                        }
+
+                        $('#sumFooter').html('<b>Ukupno: ' + parseFloat(data[1]).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '</b>');
+
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+            });
+        });
+    </script>
+
+}

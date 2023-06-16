@@ -1,0 +1,119 @@
+﻿@model Store
+
+@{
+    ViewData["Title"] = "Edit Store";
+}
+
+<h1>Izmenite radnju</h1>
+
+<form enctype="multipart/form-data" asp-action="EditStore" method="post" class="mt-3">
+    <div asp-validation-summary="All" class="text-danger">
+    </div>
+
+    <div class="form-group row">
+
+        <input asp-for="StoreId" class="form-control" value="@Model.StoreId" hidden>
+
+    </div>
+    <div class="form-group row">
+
+        <input asp-for="StoreGuid" class="form-control" value="@Model.StoreGuid" hidden>
+
+    </div>
+    <div class="form-group row">
+
+        <input asp-for="CreatedByUserId" class="form-control" value="@Model.CreatedByUserId" hidden>
+
+    </div>
+
+
+
+
+    <div class="form-group row">
+       @* <label asp-for="StoreName" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+       <label class="col-sm-3 col-lg-2 col-form-label">Ime radnje</label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="StoreName" class="form-control" placeholder="Ime radnje">
+            <span asp-validation-for="StoreName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="StoreAddress" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Adresa radnje</label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="StoreAddress" class="form-control" placeholder="Adresa radnje">
+            <span asp-validation-for="StoreAddress" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="StoreDescription" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Opis radnje</label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="StoreDescription" class="form-control" placeholder="Opis radnje">
+            <span asp-validation-for="StoreDescription" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="ZipCodeAndCity" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Poštanski broj i grad</label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="ZipCodeAndCity" class="form-control" placeholder="Poštanski broj i grad">
+            <span asp-validation-for="ZipCodeAndCity" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="WebSite" class="col-sm-3 col-lg-2 col-form-label"></label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="WebSite" class="form-control" placeholder="Web site">
+            <span asp-validation-for="WebSite" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        @*<label asp-for="Telephone" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Telefonski broj</label>
+        <div class="col-sm-9 col-lg-10">
+            <input asp-for="Telephone" class="form-control" placeholder="Telefonski broj">
+            <span asp-validation-for="Telephone" class="text-danger"></span>
+        </div> 
+    </div>
+    <div class="form-group row">
+       @* <label asp-for="Photo" class="col-sm-3 col-lg-2 col-form-label"></label>*@
+        <label class="col-sm-3 col-lg-2 col-form-label">Slika radnje</label>
+        <img class="col-sm-3 col-lg-4" style="width:40%" src="@Url.Content(@Model.ImageSource)"
+             asp-append-version="true" />
+        <input asp-for="ImageSource" class="form-control" hidden>
+        <br />
+        <div class="col-sm-6 col-lg-6">
+            <div class="custom-file">
+                <input asp-for="Photo" class="form-control custom-file-input">
+                <label class="custom-file-label">Promenite sliku radnje...</label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary" style="width:auto">
+                Promenite radnju
+            </button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script src="~/js/slideshow.js"></script>
+    <script src="~/js/slideshowTimeChange.js"></script>
+    <script src="~/js/navigateToProductsPage.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
+}

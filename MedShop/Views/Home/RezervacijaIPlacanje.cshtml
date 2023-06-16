@@ -1,0 +1,438 @@
+﻿@model Dictionary<int, List<int>>
+
+
+@{
+    ViewData["Title"] = "Reservation Page";
+
+    var currentDate = ViewBag.Date;
+    var storeId = ViewBag.StoreId;
+    var numberOfProductsInShoppingCart = ViewBag.NumberOfListInShoopingCart;
+
+
+}
+
+<link href="~/css/breadcrumb.css" rel="stylesheet" />
+
+<nav arial-label="breadcrumb" style="background-color:whitesmoke">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("MyShoppingCart","Home")">Moja korpa</a></li>
+        <li class="breadcrumb-item active">Rezervacija</li>
+        <li class="breadcrumb-item">Podaci o kupcu</li>
+        <li class="breadcrumb-item">Podaci o porudžbini</li>
+        <li class="breadcrumb-item">Potvrda porudžbine</li>
+    </ol>
+</nav>
+
+<h1>Rezervacija</h1>
+<hr />
+<hidden name="@ViewBag.Date"></hidden>
+<hidden id="hiddenFieldStoreId" value="@storeId"></hidden>
+
+
+<table>
+    <tr>
+        <td style="width:30%">
+            <input type="checkbox" class="radio" name="btnCheckBox" value="Pickup" id="Pickup" checked /> <label>Preuzimanje <i class="fas fa-shopping-bag" style="color:red"></i></label>           
+        </td>
+        <td style="width:70%">
+            <input id="txtDatePickup" value="@currentDate" />
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+
+        </td>
+        <td style="width:70%">
+            <label>Sati</label>
+            <select id="ddlHourPickup" asp-items="@(new SelectList(Model.Keys))"></select>
+            <label>Minuti</label>
+            <select id="ddlMinutesPickup" asp-items="@(new SelectList(Model.First().Value))"></select>
+        </td>
+    </tr>
+</table>
+
+<hr />
+
+<table>
+    <tr>
+        <td style="width:30%">
+            <input type="checkbox" class="radio" name="btnCheckBox" value="Delivery" id="Delivery" /><label>Isporuka <i class="fas fa-truck" style="color:red"></i></label>
+        </td>
+        <td style="width:70%">
+            <input id="txtDateDelivery" disabled="disabled" value="@currentDate" />
+        </td>
+    </tr>
+    <tr>
+        <td style="width:30%">
+        </td>
+        <td style="width:70%">
+            <label>Sati</label>
+            <select id="ddlHourDelivery" disabled="disabled" asp-items="@(new SelectList(Model.Keys))"></select>
+            <label>Minuti</label>
+            <select id="ddlMinutesDelivery" disabled="disabled" asp-items="@(new SelectList(Model.First().Value))"></select>
+        </td>
+    </tr>
+</table>
+
+<br />
+<label id="lblError"></label>
+<br />
+<br />
+
+
+<form method="get" asp-action="CreateCustomer" asp-controller="Home">
+    <input name="storeId" value="@ViewBag.StoreId" hidden />
+    @if (numberOfProductsInShoppingCart == 0)
+    {
+        <button type="button" class="btn btn-secondary" disabled>Idi na naplatu</button>
+        <label style="color:red; font-style:italic">*Vasa korpa je prazna. Molimo Vas odaberite proizvod.</label>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-primary" id="btnNaplata" name="valueOfShippingMethod">Idi na naplatu</button>
+    }
+
+</form>
+
+
+<style>
+
+    @@media only screen and (min-width: 774px) {
+        .row {
+            width: 80%;
+        }
+    }
+
+
+   /* @@media only screen and (max-width: 774px) {
+        .row {
+            width: 100%;
+            margin-left: 10px;
+        }
+    }*/
+</style>
+
+
+@section Scripts{
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <link href="~/jqueryui/jquery-ui.css" rel="stylesheet" />
+    <script src="~/jqueryui/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //link: https://stackoverflow.com/questions/9709209/html-select-only-one-checkbox-in-a-group
+
+            var storeId = $('#hiddenFieldStoreId').attr('value');
+            var checkedId = $('input:checked').attr('id');
+            var dateWhenWeLandOnPage = $('hidden').attr('name');
+            $('#btnNaplata').attr('value', checkedId);
+            $("input:checkbox").on('click', function () {
+                // in the handler, 'this' refers to the box clicked on
+                var $box = $(this);
+                checkedId = $(this).attr('id');
+
+                $('#btnNaplata').attr('value', checkedId);
+
+                $('#ddlHour' + checkedId).prop("disabled", false);
+                $('#ddlHour' + checkedId).prop("disabled", false);
+                $('#ddlMinutes' + checkedId).prop("disabled", false);
+                $('#txtDate' + checkedId).prop("disabled", false);
+
+                var selectedDatee = dateWhenWeLandOnPage;
+                $('#ddlHour' + checkedId).empty();
+                $('#ddlMinutes' + checkedId).empty();
+                $('#lblError').text('');
+                $('#txtDate' + checkedId).val(dateWhenWeLandOnPage);
+                $.ajax({
+                    url: "https://localhost:44336/home/GetAvailableHoursAndMinutesBySelectedDate",
+                    method: 'post',
+                    data: { selectedDate: dateWhenWeLandOnPage, shippingMethod: checkedId, storeId: storeId },
+                    dataType: "json",
+                    success: function (data) {
+                        debugger
+
+                        var selectHTMLHours = "";
+                        var selectHTMLMinutes = "";
+                        var firstKey = data[0].Key;
+
+                        var array = data.Keys;
+
+                        $.each(data, function (index, value) {
+                            if (data[index].key == -1) {
+                                $('#lblError').css('color', 'red').text('Store is closed! Please select another day!');
+                            }
+                            else {
+                                selectHTMLHours += "<option value='" + data[index].Key + "'>" + data[index].Key + "</option>";
+                                if (data[index].Key == firstKey) {
+                                    for (var i = 0; i < data[index].Value.length; i++) {
+                                        selectHTMLMinutes += "<option value='" + data[index].Value[i] + "'>" + data[index].Value[i] + "</option>";
+                                    }
+
+                                    $('#ddlMinutes' + checkedId).html(selectHTMLMinutes);
+
+                                }
+                            }
+
+                        });
+
+                        $('#ddlHour' + checkedId).html(selectHTMLHours);
+
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+
+
+                $('#txtDate' + checkedId).val(dateWhenWeLandOnPage);
+                if ($box.is(":checked")) {
+                   
+                    var group = "input:checkbox[name='" + $box.attr("name") + "']";
+                    $(group).prop("checked", false);
+                    $box.prop("checked", true);
+                } else {
+                    $box.prop("checked", false);
+                }
+
+                var checkBoxNotSelected = $('input[type=checkbox]:not(:checked)').attr('id');
+
+                $('#ddlHour' + checkBoxNotSelected).prop("disabled", true);
+                $('#ddlMinutes' + checkBoxNotSelected).prop("disabled", true);
+
+                $('#txtDate' + checkBoxNotSelected).prop("disabled", true);
+
+            });
+
+
+
+            $('#txtDatePickup').datepicker({
+                showOn: 'both',
+                dateFormat: 'mm/dd/yy'
+                //onSelect: function (dateText, inst) {
+                //    var date = $(this).val();
+                //    alert(date);
+                //}
+                //dateFormat: 'dd/mm/yy'
+
+
+            });
+
+            $('#txtDateDelivery').datepicker({
+                showOn: 'both',
+                dateFormat: 'mm/dd/yy'
+                //onSelect: function (dateText, inst) {
+                //    var date = $(this).val();
+                //    alert(date);
+                //}
+                //dateFormat: 'dd/mm/yy'
+
+
+            });
+
+            var selectedDateePickup = $('#txtDatePickup').val();
+            var selectedHourrPickup = $('#ddlHourPickup').val();
+            var ddlMinutesPickup = $('#ddlMinutesPickup');
+            var ddlHoursPickup = $('#ddlHourPickup');
+            $('#ddlHourPickup').on("change", function () {
+                debugger
+                var selectedHourrPickup = $(this).val();
+                ddlMinutesPickup.empty();
+                $.ajax({
+                    url: "https://localhost:44336/home/GetAvailableHoursAndMinutesBySelectedHour",
+                    method: 'post',
+                    data: { selectedDate: selectedDateePickup, selectedHour: selectedHourrPickup },
+                    dataType: "json",
+                    success: function (data) {
+                        debugger
+                        x = data.length;
+
+                        var selectHTML = "";
+
+                        var i;
+                        for (i = 0; i < data.length; i++) {
+                            selectHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
+
+                        }
+                        ddlMinutesPickup.html(selectHTML);
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+
+            });
+
+
+            $('#txtDatePickup').on("change", function () {
+
+                var selectedDateePickup = $(this).val();
+                ddlHoursPickup.empty();
+                ddlMinutesPickup.empty();
+                $('#lblError').text('');
+                var shippingMethod = 'Pickup';
+
+                $.ajax({
+                    url: "https://localhost:44336/home/GetAvailableHoursAndMinutesBySelectedDate",
+                    method: 'post',
+                    data: { selectedDate: selectedDateePickup, shippingMethod: shippingMethod, storeId: storeId },
+                    dataType: "json",
+                    success: function (data) {
+                        debugger
+
+
+                        var selectHTMLHours = "";
+                        var selectHTMLMinutes = "";
+                       
+                        //var fir = data[0].value[1];
+                        //var array = data.Keys;
+
+                        $.each(data, function (index, value) {
+                            if (data[index].key == -1) {
+                                $('#lblError').css('color', 'red').text('Store is closed! Please select another day!');
+                            }
+                            else {
+
+                                var firstKey = data[0].key;
+                                selectHTMLHours += "<option value='" + data[index].key + "'>" + data[index].key + "</option>";
+                                if (data[index].key == firstKey) {
+                                    for (var i = 0; i < data[index].value.length; i++) {
+                                        selectHTMLMinutes += "<option value='" + data[index].value[i] + "'>" + data[index].value[i] + "</option>";
+                                    }
+
+                                    ddlMinutesPickup.html(selectHTMLMinutes);
+
+                                }
+                            }
+
+                        });
+
+                        ddlHoursPickup.html(selectHTMLHours);
+
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+
+            });
+
+
+            var selectedDateeDelivery = $('#txtDateDelivery').val();
+            var selectedHourrDelivery = $('#ddlHourDelivery').val();
+            var ddlMinutesDelivery = $('#ddlMinutesDelivery');
+            var ddlHoursDelivery = $('#ddlHourDelivery');
+            $('#ddlHourDelivery').on("change", function () {
+
+                var selectedHourrDelivery = $(this).val();
+                ddlMinutesDelivery.empty();
+                $.ajax({
+                    url: "https://localhost:44336/home/GetAvailableHoursAndMinutesBySelectedHour",
+                    method: 'post',
+                    data: { selectedDate: selectedDateeDelivery, selectedHour: selectedHourrDelivery },
+                    dataType: "json",
+                    success: function (data) {
+                        debugger
+                        x = data.length;
+
+                        var selectHTML = "";
+
+                        var i;
+                        for (i = 0; i < data.length; i++) {
+                            selectHTML += "<option value='" + data[i] + "'>" + data[i] + "</option>";
+
+                        }
+                        ddlMinutesDelivery.html(selectHTML);
+
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+
+            });
+
+
+            $('#txtDateDelivery').on("change", function () {
+
+                var selectedDateeDelivery = $(this).val();
+                ddlHoursDelivery.empty();
+                ddlMinutesDelivery.empty();
+                $('#lblError').text('');
+                var shippingMethod = 'Delivery';
+
+                $.ajax({
+                    url: "https://localhost:44336/home/GetAvailableHoursAndMinutesBySelectedDate",
+                    method: 'post',
+                    data: { selectedDate: selectedDateeDelivery, shippingMethod: shippingMethod, storeId: storeId },
+                    dataType: "json",
+                    success: function (data) {
+                        debugger
+
+
+                        var selectHTMLHours = "";
+                        var selectHTMLMinutes = "";
+                       
+
+                       /* var array = data.Keys;*/
+
+                        $.each(data, function (index, value) {
+                            if (data[index].key == -1) {
+                                $('#lblError').css('color', 'red').text('Store is closed! Please select another day!');
+                            }
+                            else {
+                                var firstKey = data[0].key;
+                                selectHTMLHours += "<option value='" + data[index].key + "'>" + data[index].key + "</option>";
+                                if (data[index].key == firstKey) {
+                                    for (var i = 0; i < data[index].value.length; i++) {
+                                        selectHTMLMinutes += "<option value='" + data[index].value[i] + "'>" + data[index].value[i] + "</option>";
+                                    }
+
+                                    ddlMinutesDelivery.html(selectHTMLMinutes);
+
+                                }
+                            }
+
+                        });
+
+                        ddlHoursDelivery.html(selectHTMLHours);
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+
+            });
+
+
+            $("#btnNaplata").on('click', function () {
+
+                var shippingMethod = $('input[type=checkbox]:checked').attr('id');
+                var selectedDate = $('#txtDate' + shippingMethod).val();
+                var selectedHour = $('#ddlHour' + shippingMethod).val();
+                var selectedMinutes = $('#ddlMinutes' + shippingMethod).val();
+
+                $.ajax({
+                    url: "https://localhost:44336/home/GetReservationDateTime",
+                    method: 'post',
+                    data: { selectedDate: selectedDate, selectedHour: selectedHour, selectedMinutes: selectedMinutes },
+                    dataType: "json",
+                    success: function (data) {
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+
+
+            });
+
+        });
+
+
+    </script>
+
+}

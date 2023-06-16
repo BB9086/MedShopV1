@@ -1,0 +1,84 @@
+﻿@model Product
+@inject IStoreRepository storeRepository;
+@inject UserManager<ApplicationUser> userManager;
+
+@{
+    ViewData["Title"] = "Details about product";
+    //var productKey = Model.ProductKey.ToString();
+    
+}
+
+<div class="row justify-content-center m-3">
+    <div class="card" style="min-width:250px">
+        <div class="card-header text-center">
+            <h1>@Model.Name <span>@Model.QuantityOfProduct</span></h1>
+        </div>
+
+        <div class="card-body text-center">
+
+            <img class="float-left" style="width:40%" src="@Url.Content(@Model.ImageSource)"
+                 asp-append-version="true" />
+            <div class="float-left" style="width:60%">
+                <h5 id="currentPriceOfProduct">Cena: @Model.CurrentPrice <span>RSD</span> </h5>
+                <h5>Šifra proizvoda: @Model.ProductKey</h5>
+                <h5>Proizvođač: @Model.Producer</h5>
+                <hr />
+            </div>
+
+        </div>
+        <div class="card-footer text-center">
+            <a class="btn btn-primary" asp-controller="home" asp-action="GetProductAndCategoriesByStoreId" asp-route-storeId="@Model.StoreType" style="margin:2px">Nazad</a>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Manager"))
+            {
+                var managerOfStore = storeRepository.GetStoreById(Convert.ToInt32(Model.StoreType)).CreatedByUserId;
+
+                var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+                if (managerOfStore == user.Id)
+                {
+                    <a asp-action="EditProduct" asp-controller="Manage" asp-route-productId="@Model.ProductId" class="btn btn-primary" style="margin:2px">Izmeniti</a>
+
+                    <span style="display:none" id="confirmDeleteSpan_@Model.ProductId">
+                        <span>Da li ste sigurni da želite da izbrišete proizvod?</span>
+                        <a asp-action="DeleteProduct" asp-controller="Manage" asp-route-productId="@Model.ProductId" class="btn btn-danger">Da</a>
+                        <a href="#" class="btn btn-primary" onclick="confirmDelete('@Model.ProductId', false)">Ne</a>
+                    </span>
+                    <span id="deleteSpan_@Model.ProductId">
+                        <a href="#" class="btn btn-danger" onclick="confirmDelete('@Model.ProductId', true)" style="margin:2px">Izbrisati</a>
+                    </span>
+
+                    
+                }
+
+
+            }
+
+            <buton type="button" class="btn btn-info" name="@Model.ProductKey" id="btnAdd" style="margin:2px">Dodaj u korpu</buton>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script src="~/js/setDataInStorage.js"></script>
+    <script src="~/js/site.js"></script>
+    <script type="text/javascript">
+
+
+        $('#btnAdd').click(function () {
+
+            var productkey = $('#btnAdd').attr("name");
+            var currentPrice = $('#currentPriceOfProduct').text().split(" ")[1];
+            //!!! ovo dodajem da bih uz broj porudzbina pratila i cenu u hubu!
+            connection.invoke("Announce", currentPrice).catch(function (err) { return console.error(err.toString()); });
+
+            insertNewProduct(productkey);
+        });
+
+    </script>
+
+}

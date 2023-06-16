@@ -1,0 +1,117 @@
+﻿@model IEnumerable<Store>
+
+@{
+    ViewData["Title"] = "List Of Stores";
+}
+
+<h3><b>Proizvođači</b></h3>
+<br />
+
+@if (User.IsInRole("Admin"))
+{
+    <a class="btn btn-primary mb-3" style="width:auto" asp-controller="manage" asp-action="CreateStore">Dodajte novu radnju</a>
+
+
+}
+<hr />
+<div class="card-deck">
+    @foreach (var store in Model)
+    {
+
+
+
+        <div class="card m-4" onclick="NavigateToProductsPage(@store.StoreId)">
+            @*function NavigateToPage is defined in navigateToPage.js*@
+            <div class="card-header d-flex text-center h-100">
+                <h3>
+
+                    <a asp-controller="home" asp-action="GetProductAndCategoriesByStoreId" asp-route-storeId="@store.StoreId" class="btn-link" style="color:black">
+                        @store.StoreName
+                    </a>
+                    @*ili:*@
+                    @*<a asp-controller="home" asp-action="products" asp-route-id='@(product.Name.Replace(" ", "_")+"_"+product.Quantity+"_"+product.ProductKey)' class="btn-link" style="color:black">
+                            @product.Name <span>@product.Quantity</span>
+
+                        </a>*@
+                    @*ili:*@
+                    @*@Html.ActionLink(product.Name+" "+product.Quantity,"details",new { id=(product.Name.Replace(" ", "_")+"_"+product.Quantity+"_"+product.ProductKey) }, new { @style = "color:black; font-weight: normal;" })*@
+                </h3>
+
+            </div>
+
+            <img class="card-img-top imageThumbnail responsive" src="@Url.Content(@store.ImageSource)"
+                 asp-append-version="true" />
+            <div class="card-footer text-center">
+                <h5>@store.StoreDescription</h5>
+                <hr />
+                @if (User.IsInRole("Manager"))
+                {
+                    <a class="btn btn-primary" asp-controller="manage" asp-action="CreateProduct" asp-route-storeId="@store.StoreId" style="margin-top:5px">Kreiraj novi proizvod</a>
+                    <a class="btn btn-primary" asp-controller="manage" asp-action="ListOfCategories" asp-route-storeId="@store.StoreId" style="margin-top:5px">Kreiraj ili izmeni kategoriju proizvoda</a>
+                }
+                else
+                {
+                    <a class="btn btn-primary" asp-controller="home" asp-action="GetProductAndCategoriesByStoreId" asp-route-storeId="@store.StoreId" style="margin-top:5px">Pogledajte ponudu</a>
+                    <a class="btn btn-primary" asp-controller="manage" asp-action="EditStore" asp-route-storeId="@store.StoreId" style="width:auto; margin-top:5px">Izmenite radnju</a>
+                    <form method="post" asp-action="DeleteStore" asp-controller="manage" asp-route-storeId="@store.StoreId" style="margin-top:5px">
+
+                       
+                        <span style="display:none" id="confirmDeleteSpan_@store.StoreId">
+                            <span>Da li ste sigurni da želite da izbrišete radnju?</span>
+                            <button type="submit" class="btn btn-danger" @*onclick="return confirm('Are you sure you want to delete user: @user.UserName')"*@>Da</button>
+                            <a href="#" class="btn btn-primary" onclick="confirmDelete('@store.StoreId',false)">Ne</a>
+                        </span>
+                        <span id="deleteSpan_@store.StoreId">
+                            <a href="#" class="btn btn-danger" onclick="confirmDelete('@store.StoreId',true)">Izbrišite radnju</a>
+                        </span>
+                    </form>
+                    @*<a href="#" class="btn btn-primary">Edit</a>
+                        <a href="#" class="btn btn-danger">Delete</a>*@
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<link href="~/css/imageSlideshow.css" rel="stylesheet" />
+
+@section Scripts{
+
+    
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script src="~/js/slideshow.js"></script>
+    <script src="~/js/slideshowTimeChange.js"></script>
+    <script src="~/js/navigateToProductsPage.js"></script>
+
+<script>
+
+    function confirmDelete(uniqueId, isDeleteClicked) {
+        var deleteSpan = 'deleteSpan_' + uniqueId;
+        var confirmDeleteSpan = 'confirmDeleteSpan_' + uniqueId;
+
+        if (isDeleteClicked) {
+            $('#' + deleteSpan).hide();
+            $('#' + confirmDeleteSpan).show();
+        } else {
+            $('#' + deleteSpan).show();
+            $('#' + confirmDeleteSpan).hide();
+        }
+    }
+
+
+
+    $(document).ready(function () {
+
+       
+        $('form').on("click", function (e) {
+
+            e.stopPropagation();
+           
+        });
+    });
+   
+   
+</script>
+    
+}

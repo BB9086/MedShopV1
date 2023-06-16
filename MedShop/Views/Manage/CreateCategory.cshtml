@@ -1,0 +1,49 @@
+﻿
+@model CreateCategoryViewModel
+
+@{
+    ViewData["Title"] = "Create Category";
+    var storeId = ViewBag.StoreId;
+}
+
+@*to support file upload set enctype="multipart/form-data"*@
+<form  asp-action="CreateCategory" method="post" class="mt-3">
+    <div asp-validation-summary="All" class="text-danger">
+    </div>
+
+    
+    <div class="form-group row">
+
+        <input asp-for="StoreType" class="form-control" value="@storeId" hidden>
+
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" id="lblNewCategory">Nova kategorija</label>
+        <div class="col-sm-10">
+            <input asp-for="CategoryName" class="form-control" placeholder="Ime nove kategorije">
+            <span asp-validation-for="CategoryName" class="text-danger"></span>
+        </div>
+    </div>
+
+    
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary" style="width:auto">
+                Kreiraj kategoriju
+            </button>
+        </div>
+    </div>
+</form>
+
+@*This script is required to display the selected file in the file upload element*@
+
+@section Scripts {
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script src="~/js/slideshow.js"></script>
+    
+    <script src="~/js/navigateToProductsPage.js"></script>
+    
+}

@@ -1,0 +1,14 @@
+﻿.breadcrumb {
+    justify-content: center;
+    background-color: whitesmoke;
+}
+
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: ">>";
+}
+
+.breadcrumb > .active {
+    color: black;
+    font-weight: bold;
+}

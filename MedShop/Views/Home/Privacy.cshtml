@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor httpContextAccessor
+
+
+@{
+
+    ViewData["Title"] = "Privacy Policy";
+    httpContextAccessor.HttpContext.Session.SetString("Name", "Borijana");
+}
+
+@*LinkedList za citanje vrednosti session value u razoru : https://stackoverflow.com/questions/43698878/how-to-get-session-value-asp-net-core-inside-a-view*@
+<h1>@ViewData["Title"]</h1>
+
+
+@*<div>
+    @ViewBag.SessionId
+</div>
+<hr />
+
+@if (Context.Request.Cookies[".AspNetCore.Session"] != null)
+{
+    <h5 id="sessionId">@(Context.Request.Cookies[".AspNetCore.Session"])</h5>
+    <br />
+    <h3>@(Context.Session.Id)</h3>
+
+
+}*@
+
+
+<p>Use this page to detail your site's privacy policy.</p>
+
+
+
+
+
+
+
+
+

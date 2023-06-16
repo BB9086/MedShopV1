@@ -1,0 +1,39 @@
+﻿@model List<ManageUserRolesViewModel>
+
+@{ 
+    ViewData["Title"] = "Manage User Roles page";
+    var userId=ViewBag.UserId;
+}
+
+<h1>Upravljajte korisničkim ulogama</h1>
+
+<form method="post" style="margin-top:20px">
+    <div asp-validation-summary="All">
+        <div class="card">
+            <div class="card-header">
+                <h2>Dodajte ili izbrišite korisnike iz ove uloge</h2>
+            </div>
+            <div class="card-body">
+                @*Count funkcija ne moze IEnumerable samo na List*@
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <div class="form-check m-1">
+                        <input type="hidden" asp-for="@Model[i].RoleId" />
+                        <input type="hidden" asp-for="@Model[i].RoleName" />
+                        <input asp-for="@Model[i].IsSelected" class="form-check-input" />
+                        @*ovo asp-for u labeli ispod je kada kliknemo na ime da se cekira ili odcekira checkbox, da bude vezano sa inputom*@
+                        <label class="form-check-label" asp-for="@Model[i].IsSelected">
+                            @Model[i].RoleName
+                        </label>
+                    </div>
+                }
+            </div>
+            <div class="card-footer">
+                <input type="submit" value="Izmeni" class="btn btn-primary"
+                       style="width:auto" />
+                <a asp-action="EditUser" asp-route-id="@userId"
+                   class="btn btn-primary" style="width:auto">Otkaži</a>
+            </div>
+        </div>
+     </div>
+</form>

@@ -1,0 +1,167 @@
+﻿@model Dictionary<List<Category>, List<Product>>
+
+@inject IStoreRepository storeRepository
+
+@{
+    ViewData["Title"] = "Product List";
+
+    int storeId = Convert.ToInt32(ViewBag.StoreId);
+    int deliveryTime = Convert.ToInt32(storeRepository.GetBufferTimeByStoreTypeAndShippingMethod(storeId, "Delivery"));
+}
+
+<div>@ViewBag.SessionId</div>
+
+@*show on small screen only*@
+<div id="productsMenuTop" class="d-sm-none" style="position:sticky; top:120px; z-index:1; width:100%; background-color: whitesmoke; color:#91cff6">
+    <h3>Proizvodi</h3>
+    <hr />
+    <nav class="navbar navbar-expand">
+        <ul class="nav navbar-nav">
+            @foreach (var categories in Model.Keys)
+            {
+                foreach (var category in categories)
+                {
+                    <li @*class="nav-item"*@ style="display:inline-block">
+                        <a class="nav-link navbarLeft" id="id_@category.CategoryName" href="#section_@category.CategoryName" value="@category.CategoryId">@category.CategoryName</a>
+                    </li>
+                }
+            }
+        </ul>
+    </nav>
+</div>
+
+<div id="scrollPosition"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3">
+            <div id="infoDiv" style="position: -webkit-sticky; position: sticky; top: 85px;" class="content">
+                <div class="info">
+                    <div id="productsMenu">
+                        <h2>Proizvodi</h2>
+                        <hr />
+                        <nav class="navbar">
+                            <ul class="navbar-nav">
+
+                                @foreach (var categories in Model.Keys)
+                                {
+                                    foreach (var category in categories)
+                                    {
+                                        <li class="nav-item" style="display:block">
+                                            <a class="nav-link navbarLeft" id="id_@category.CategoryName" href="#section_@category.CategoryName" value="@category.CategoryId">@category.CategoryName</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <h2>O nama</h2>
+                    <hr />
+                    <p>@storeRepository.GetStoreById(storeId).StoreName</p>
+                    @*<div class="fakeimg" style="height: 100px; background: #aaa;">Fake Image</div>*@
+                    <img src="~/images/person.png" class="img-fluid img-thumbnail" />
+                    <h5>Adresa</h5>
+                    <p>@storeRepository.GetStoreById(storeId).StoreAddress</p>
+                    <p>@storeRepository.GetStoreById(storeId).ZipCodeAndCity</p>
+                    <h5>E-mail</h5>
+                    <div style="overflow-x:auto">
+                        <a href="@storeRepository.GetStoreById(storeId).WebSite">@storeRepository.GetStoreById(storeId).WebSite</a>
+                    </div>
+                    <hr />
+                    <h5>Procenjeno vreme za dostavu</h5>
+                    <p>@deliveryTime min</p>
+                    <hr />
+                    <h5>Kontakt telefon</h5>
+                    <p>@storeRepository.GetStoreById(storeId).Telephone</p>
+
+                </div>
+              
+            </div>
+        </div>
+        <div class="col-lg-9 content">
+            @foreach (var categories in Model.Keys)
+            {
+                foreach (var category in categories)
+                {
+                    <h4 style="font-weight:bold;" id="section_@category.CategoryName" class="anchor_offset">@category.CategoryName</h4>
+                    <div class="card-deck">
+                        @foreach (var products in Model.Values)
+                        {
+                            foreach (var product in products.Where(x => x.CategoryType == category.CategoryId))
+                            {
+                                <div class="col-lg-4 col-md-6 col-sm-6 card-deck" style="margin:0px">
+
+                                    <div class="card m-2" onclick="NavigateToDetailsPage('@product.DescriptionId')">
+                                        <div class="card-header d-flex text-center h-100">
+                                            <h3>
+                                                <a asp-controller="home" asp-action="products" asp-route-id="@product.DescriptionId" class="btn-link" style="color:black;">
+                                                    @product.Name <span>@product.QuantityOfProduct</span>
+                                                </a>
+                                                @*ili:*@
+                                                @*<a asp-controller="home" asp-action="products" asp-route-id='@(product.Name.Replace(" ", "_")+"_"+product.Quantity+"_"+product.ProductKey)' class="btn-link" style="color:black">
+                                                        @product.Name <span>@product.Quantity</span>
+
+                                                    </a>*@
+                                                @*ili:*@
+                                                @*@Html.ActionLink(product.Name+" "+product.Quantity,"details",new { id=(product.Name.Replace(" ", "_")+"_"+product.Quantity+"_"+product.ProductKey) }, new { @style = "color:black; font-weight: normal;" })*@
+                                            </h3>
+
+                                        </div>
+                                      
+                                        <img class="card-img-top imageThumbnail img-fluid" style="max-width:320px; max-height:320px" src="@Url.Content(@product.ImageSource)"
+                                             asp-append-version="true" />
+                                        <div class="card-footer text-center">
+                                            <h3>@product.Price <span>RSD</span></h3>
+                                            <hr />
+                                            <a href="#" class="btn btn-primary">Pogledajte detaljnije</a>
+                                            <br />
+                                            <button type="button" priceValue="@product.Price" class="btn btn-info" style="margin-top:5px" name="@product.ProductKey" value="btnForAddingProductInShoppingCart" id="btnAdd_@product.ProductKey">Dodaj u korpu</button>
+                                            @*<a href="#" class="btn btn-primary">Edit</a>
+                                                <a href="#" class="btn btn-danger">Delete</a>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+    <script src="~/js/scrollToProductsPosition.js"></script>
+    <script src="~/js/hideProductsMenuOnSmallScreen.js"></script>
+    <script src="~/js/hideNavbarTooglerOnSmallScreen.js"></script>
+    <script src="~/js/setDataInStorage.js"></script>
+}
+
+@*<script>
+        function NavigateToDetailsPage() {
+            alert('test');
+        }
+
+
+    </script>*@
+
+<script type="text/javascript">
+    $('button[value="btnForAddingProductInShoppingCart"]').click(function (e) {
+        e.stopPropagation();
+        var productkey = $(this).attr("name");
+        var currentPrice = $(this).attr("priceValue");
+        connection.invoke("Announce", currentPrice).catch(function (err) { return console.error(err.toString()); });
+        insertNewProduct(productkey);
+    });
+</script>
+
+<script>
+    function NavigateToDetailsPage(id) {
+    //window.location.href = "/home/GetProductAndCategoriesByStoreId?storeId=" + id;
+    var url = '@Url.Action("products","home", new {id = "__id__"})';
+    window.location.href = url.replace('__id__', id);
+}
+</script>
+

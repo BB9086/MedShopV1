@@ -1,0 +1,586 @@
+﻿@inject SignInManager<ApplicationUser> signInManager;
+@inject UserManager<ApplicationUser> userManager;
+@inject IStoreRepository _storeRepository;
+
+
+
+<!DOCTYPE html>
+<html lang="en" id="back">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MedShop</title>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
+        <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+        <link href="~/font-awesome/css/all.css" rel="stylesheet" />
+        <link href="~/css/site.css" rel="stylesheet" />
+        <link href="~/css/chat_site.css" rel="stylesheet" />
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous"
+              href="https://sstackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position"
+              asp-fallback-test-value="absolute"
+              asp-suppress-fallback-integrity="true" />
+
+        <link href="~/css/site.css" rel="stylesheet" />
+        <link href="~/css/chat_site.css" rel="stylesheet" />
+
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+        <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    </environment>
+
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/card.css" rel="stylesheet" />
+    @*Koristimo za ikonice u footeru:*@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+</head>
+<body id="bodylayout">
+    <header class="headerContainerWrapper" style="background-color:lightgoldenrodyellow">
+        @*https://stackoverflow.com/questions/47451412/bootstrap-4-navbar-toggle-not-display-in-ipad*@
+        <nav class="navbar navbar-expand-lg navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow" id="hideNavOnScroll">
+            <div class="container">
+                @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><b>Webshop</b></a>*@
+                <div class="logo">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/images/logo.png" style="width:150px" />
+                    </a>
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-lg-inline-flex flex-lg-row-reverse">
+                    <ul class="navbar-nav">
+                        @*<li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">MedShop</a>
+                            </li>*@
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLinkStores"
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:black">
+                                Proizvođači <i class="fas fa-store" style="color: #17a2b8"></i>
+                            </a>
+
+                            @*Podaci se za dropdown listu se ucitavaju iz baze*@
+
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkStores">
+                                @foreach (var store in @_storeRepository.GetStores())
+                                {
+                                    <a class="dropdown-item" asp-controller="Home"
+                                       asp-action="GetProductAndCategoriesByStoreId" asp-route-storeId="@store.StoreId">@store.StoreName <i class="fas fa-store" style="color: #17a2b8"></i> </a>
+                                }
+                            </div>
+
+                        </li>
+
+                        @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Podešavanja <i class="fas fa-users-cog" style="color: #17a2b8"></i>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" asp-controller="Administration"
+                                       asp-action="ListUsers">Korisnici <i class="fas fa-users" style="color: #17a2b8"></i></a>
+                                    <a class="dropdown-item" asp-controller="Administration"
+                                       asp-action="ListRoles">Uloge (Roles) <i class="fas fa-user-tie" style="color: #17a2b8"></i></a>
+                                    <a class="dropdown-item" asp-controller="Administration"
+                                       asp-action="ListClaims">Zahtevi (Claims) <i class="fas fa-tasks" style="color: #17a2b8"></i></a>
+                                    <a class="dropdown-item" asp-controller="Manage"
+                                       asp-action="ListOfStores">Radnje <i class="fas fa-store" style="color: #17a2b8"></i></a>
+                                </div>
+                            </li>
+                        }
+
+                        @if (signInManager.IsSignedIn(User) && User.IsInRole("Manager"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Podešavanja <i class="fas fa-users-cog" style="color: #17a2b8"></i>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                                    <a class="dropdown-item" asp-controller="Manage"
+                                       asp-action="ListOfStores">Radnje<i class="fas fa-store" style="color: #17a2b8"></i></a>
+                                </div>
+                            </li>
+                        }
+
+
+
+
+
+                        @if (signInManager.IsSignedIn(User))
+                        {
+
+
+                            <li class="nav-item">
+                                <form method="post" asp-action="logout" asp-controller="account">
+                                    <button type="submit" class="nav-link btn btn-link" style="width:auto">
+                                        Odjavi se @User.Identity.Name <i class="fas fa-sign-out-alt" style="color: #17a2b8"></i>
+                                    </button>
+                                </form>
+                            </li>
+
+
+
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a asp-action="Register" asp-controller="Account" class="nav-link text-dark">Registruj se <i class="fas fa-user-plus" style="color: #17a2b8"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-action="Login" asp-controller="Account" class="nav-link text-dark">Prijavi se <i class="fas fa-sign-in-alt" style="color: #17a2b8"></i></a>
+                            </li>
+                        }
+
+                        @*<li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privatnost <i class="fas fa-shield-alt" style="color: #17a2b8;"></i></a>
+                            </li>*@
+
+                        @*hide on small screens*@
+                        <li class="nav-item d-none d-lg-block" @*id="listModalHover"*@ style="border:1px solid black; position:relative">
+                            <a class="nav-link text-white btn-info" id="btnModalHower" style="display:inline-block; width:100%; height:100%">
+                                <b id="txtVasaKorpa">Vaša korpa</b>
+                                <i id="envelopeLink" class="fas fa-shopping-cart"></i><span id="spanNoti" class="notification-badge" style="padding:2px"><small id="badge" class="notification-badge">&nbsp;</small></span>
+                            </a>
+                            <div class="popup" id="exampleModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Moja korpa</h5>
+                                            <button type="button" id="btnClose" onclick="closeForm()" class="close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <ul id="listOfProductsInShopCart" class="list-group">
+                                            </ul>
+                                            <b id="bTotalSum"><span style="font-size:16px">Iznos: </span><span id="spanTotalSum" style="font-size:16px"></span></b>
+                                        </div>
+                                        <div class="modal-footer">
+                                            @*<a asp-controller="home" asp-action="RezervacijaIPlacanje" class="btn btn-primary">Na placanje</a>*@
+                                            <a asp-controller="home" asp-action="MyShoppingCart" id="btnShoopingCart" class="btn btn-primary">
+                                                Pogledaj korpu
+                                            </a>
+                                            @*<button type="button" class="btn btn-primary" id="btnShoopingButton">Pogledaj korpu</button>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item d-none d-lg-block" style="width:auto">
+                                <a  class="anchr" name="@((await userManager.FindByNameAsync(User.Identity.Name)).Id)" style="display:inline-block; width:100%" isManager="@(User.IsInRole("Manager"))">
+                                    <i class="fa fa-envelope fa-2x badge" @*class="envelopeForMessage"*@ style="color: #17a2b8"><small style="font-size:12px" class="badge badge-pill badge-info" @*id="smallForMessage"*@></small></i>
+                                </a>
+                                <ul class="noti-content list-group">
+                                </ul>
+                            </li>
+                        }
+
+
+                    </ul>
+
+                    <!--<ul class="navbar-nav ml-auto">-->
+                    @*@if (signInManager.IsSignedIn(User))
+                        {
+
+                            <li class="nav-item">
+                                <form method="post" asp-action="logout" asp-controller="account">
+                                    <button type="submit" class="nav-link btn btn-link py-0" style="width:auto">
+                                        Logout @User.Identity.Name
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a asp-action="Register" asp-controller="Account" class="nav-link">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-action="Login" asp-controller="Account" class="nav-link">Login</a>
+                            </li>
+                        }*@
+
+                    <!--</ul>-->
+                    @*modal frame*@
+                    @*<div  id="exampleModal" class="popup" style="display:none" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ...
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+        </nav>
+        @*show on small screens only*@
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-10" style="background-color:#17a2b8;">
+                    <div class="nav-item d-lg-none" @*id="listModalHover"*@>
+                        <a class="nav-link text-white btn-info" asp-controller="home" asp-action="MyShoppingCart" id="btnShoopingCart">
+                            <b id="txtVasaKorpa">Vasa korpa</b>
+                            <i id="envelopeLink" class="fas fa-shopping-cart"></i><span id="spanNoti" class="notification-badge" style="padding:2px"><small id="badge" class="notification-badge">&nbsp;</small></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-2" style="background-color: #17a2b8;">
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <div class="nav-item d-lg-none" style="width:auto;  z-index:2; background-color:#17a2b8">
+                            <a class="anchr" name="@((await userManager.FindByNameAsync(User.Identity.Name)).Id)" style="display:inline-block; width:100%" isManager="@(User.IsInRole("Manager"))">
+                                <i class="fa fa-envelope fa-2x badge" @*id="envelopeForMessage"*@ style="color: whitesmoke; float:right; margin-right:5px;"><small style="font-size:12px" class="badge badge-pill badge-info" @*id="smallForMessage"*@></small></i>
+                            </a>
+                            <ul class="noti-content list-group">
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div id="productsMenuOnTop"></div>
+
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+
+            <div class="chatPopup" id="myForm">
+                <form class="form-container">
+                    <span id="chat-with-id"></span>@*<a href="#" style="position:absolute; top:3px; right:35px" class="min">_</a>*@<a id="linkClose" href="#" class="close" style="font-size:20px">&times;</a>
+                    <div class="cardChat" style=" height:300px; overflow-y:scroll; margin-top:10px">
+
+                        <ul id="messageListId" style="list-style-type: none;margin:2px;padding: 0">
+
+
+                            @*<li ></li>*@
+                        </ul>
+                        @*<div id="receivedMessageId"></div>
+                            <div id="ownMessageId"></div>*@
+
+                    </div>
+
+                    <table style="width:100%">
+                        <tr>
+                            <td id="column1">
+                                <button style="width:100%;font-size:12px" type="button" class="btn btn-success" id="sendButton">Pošalji</button>
+                            </td>
+                            <td id="column2">
+                                <textarea style="width:100%; margin: 2px 5px -5px 5px; border-radius:5px" id="messageInput" placeholder="Napišite poruku..." name="msg"></textarea>
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </form>
+            </div>
+
+        </main>
+    </div>
+
+    @*<footer class="border-top footer text-muted site-footer">
+            <div class="container">
+                &copy; 2021 - WebShop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <div>TTTTTT</div>
+                <div>TTTTTT</div>
+                <div>TTTTTT</div>
+                <div>TTTTTT</div>
+            </div>
+
+
+        </footer>*@
+
+    @*https://codepen.io/scanfcode/pen/MEZPNd*@
+    <footer class="site-footer">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <h6>Nasa misija</h6>
+                    <p class="text-justify">
+                        <i>MedShop</i> ima za cilj da spoji domaće proizvođače meda sa krajnjim kupcima i na taj način omogući da nasi korisnici uzivaju u medu visokog kvaliteta.
+                    </p>
+                </div>
+
+                <div class="col-xs-6 col-md-3">
+                    <h6>MedShop</h6>
+                    <ul class="footer-links">
+                        <li><a href="#">O nama</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                        <li><a href="#">Reklamacija</a></li>
+                        <li><a href="#">Politika privatnosti</a></li>
+                        <li><a href="#">Pravo na odustajanja</a></li>
+                    </ul>
+                </div>
+                @*<a asp-action="Register" asp-controller="Account" class="nav-link text-dark">Registruj se <i class="fas fa-user-plus" style="color: #17a2b8"></i></a>*@
+                <div class="col-xs-6 col-md-3">
+                    <h6>Registracija</h6>
+                    <ul class="footer-links">
+                        <li><a href="/Account/Register">Registruj se</a></li>
+                        <li><a href="/Account/Login">Prijavi se</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-sm-6 col-xs-12">
+                    <p class="copyright-text">
+                        @*Copyright &copy; 2017 All Rights Reserved by
+                            <a href="#">Scanfcode</a>.*@
+                        &copy; 2021 MedShop sva prava zadrzana
+                    </p>
+                </div>
+
+                <div class="col-md-4 col-sm-6 col-xs-12">
+                    <ul class="social-icons">
+                        <li><a class="facebook" href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a class="twitter" href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a class="dribbble" href="#"><i class="fa fa-dribbble"></i></a></li>
+                        <li><a class="linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        //if ((window.innerWidth - document.documentElement.clientWidth) > 0) console.log('V-scrollbar active')
+        //Dodato da bi header uvek bio na dnu page-a:
+        if (location.pathname != '/home/MyShoppingCart') {
+            if ($(document).height() > $(window).height()) {
+                //$('.site-footer').attr('position', 'relative');
+                $('.site-footer').css('position', 'relative');
+                console.log('true');
+            }
+            else {
+                //$('.site-footer').attr('position', 'absolute');
+                $('.site-footer').css('position', 'absolute');
+                console.log('false');
+            }
+
+            $('#back').css('background-color', 'none')
+        }
+        else {
+            $('#back').css('background-color', '#26272b');
+        }
+    </script>
+
+    <style>
+        .site-footer {
+            background-color: #26272b;
+            padding: 45px 0 20px;
+            font-size: 15px;
+            color: #737373;
+            /* //dodato*/
+           /* position: absolute;*/
+            bottom: 0px;
+            width: 100%;
+            line-height: 24px;
+        }
+
+            .site-footer hr {
+                border-top-color: #bbb;
+                opacity: 0.5
+            }
+
+                .site-footer hr.small {
+                    margin: 20px 0
+                }
+
+            .site-footer h6 {
+                color: #fff;
+                font-size: 16px;
+                text-transform: uppercase;
+                margin-top: 5px;
+                letter-spacing: 2px
+            }
+
+            .site-footer a {
+                color: #737373;
+            }
+
+                .site-footer a:hover {
+                    color: #3366cc;
+                    text-decoration: none;
+                }
+
+        .footer-links {
+            padding-left: 0;
+            list-style: none
+        }
+
+            .footer-links li {
+                display: block
+            }
+
+            .footer-links a {
+                color: #737373
+            }
+
+                .footer-links a:active, .footer-links a:focus, .footer-links a:hover {
+                    color: #3366cc;
+                    text-decoration: none;
+                }
+
+            .footer-links.inline li {
+                display: inline-block
+            }
+
+        .site-footer .social-icons {
+            text-align: right
+        }
+
+            .site-footer .social-icons a {
+                width: 40px;
+                height: 40px;
+                line-height: 40px;
+                margin-left: 6px;
+                margin-right: 0;
+                border-radius: 100%;
+                background-color: #33353d
+            }
+
+        .copyright-text {
+            margin: 0
+        }
+
+        @@media (max-width:991px) {
+            .site-footer [class^=col-] {
+                margin-bottom: 30px
+            }
+        }
+
+        @@media (max-width:767px) {
+            .site-footer {
+                padding-bottom: 0
+            }
+
+                .site-footer .copyright-text, .site-footer .social-icons {
+                    text-align: center
+                }
+        }
+
+        .social-icons {
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none
+        }
+
+            .social-icons li {
+                display: inline-block;
+                margin-bottom: 4px
+            }
+
+                .social-icons li.title {
+                    margin-right: 15px;
+                    text-transform: uppercase;
+                    color: #96a2b2;
+                    font-weight: 700;
+                    font-size: 13px
+                }
+
+            .social-icons a {
+                background-color: #eceeef;
+                color: #818a91;
+                font-size: 16px;
+                display: inline-block;
+                line-height: 44px;
+                width: 44px;
+                height: 44px;
+                text-align: center;
+                margin-right: 8px;
+                border-radius: 100%;
+                -webkit-transition: all .2s linear;
+                -o-transition: all .2s linear;
+                transition: all .2s linear
+            }
+
+                .social-icons a:active, .social-icons a:focus, .social-icons a:hover {
+                    color: #fff;
+                    background-color: #29aafe
+                }
+
+            .social-icons.size-sm a {
+                line-height: 34px;
+                height: 34px;
+                width: 34px;
+                font-size: 14px
+            }
+
+            .social-icons a.facebook:hover {
+                background-color: #3b5998
+            }
+
+            .social-icons a.twitter:hover {
+                background-color: #00aced
+            }
+
+            .social-icons a.linkedin:hover {
+                background-color: #007bb6
+            }
+
+            .social-icons a.dribbble:hover {
+                background-color: #ea4c89
+            }
+
+        @@media (max-width:767px) {
+            .social-icons li.title {
+                display: block;
+                margin-right: 0;
+                font-weight: 600
+            }
+        }
+    </style>
+
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+
+    <script src="~/js/getDataFromStorage.js"></script>
+    <script src="~/js/fixedNavbarOnScroll.js"></script>
+    <script src="~/js/cardHover.js"></script>
+    <script src="~/js/hideNavbarOnClick.js"></script>
+
+    @*Izbegavaj ovde da stavljas signalr*@
+    @*<script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+        <script src="~/js/myHub.js"></script>*@
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
+
+

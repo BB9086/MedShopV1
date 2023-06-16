@@ -1,0 +1,51 @@
+﻿@model RegisterViewModel
+@{
+    ViewData["Title"] = "Registration page";
+}
+
+<h1>Registracija korisnika</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post">
+            <div class="registerForm" >
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                 @*   <label asp-for="Email"></label>*@
+                    <label>Korisničko ime (Email)</label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    @*<label asp-for="Password"></label>*@
+                    <label>Lozinka</label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Registruj se</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+
+    @@media only screen and (min-width: 774px) {
+        .registerForm {
+            width: 50%;
+        }
+    }
+
+
+    @@media only screen and (max-width: 774px) {
+        .registerForm {
+            width: 100%;
+        }
+    }
+
+</style>

@@ -1,0 +1,136 @@
+﻿@model List<CreateWorkingHoursViewModel>
+
+@{
+    ViewData["Title"] = "Create Working Hours";
+
+}
+
+<h1>Working Hours of Store</h1>
+
+@foreach (var day in Model)
+{
+
+
+    <div class="card mb-3">
+        <div class="card-header">
+            Dan u nedelji :
+            @{
+                switch (day.DayOfWeek)
+                {
+                    case 0:
+                        <span>Ponedeljak</span>
+                        break;
+                    case 1:
+                        <span>Utorak</span>
+                        break;
+                    case 2:
+                        <span>Sreda</span>
+                        break;
+                    case 3:
+                        <span>Cetvrtak</span>
+                        break;
+                    case 4:
+                        <span>Petak</span>
+                        break;
+                    case 5:
+                        <span>Subota</span>
+                        break;
+                    case 6:
+                        <span>Nedelja</span>
+                        break;
+
+                }
+
+            }
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Radno vreme</h5>
+            <input id="DayOfWeek_@day.DayOfWeek" name="DayOfWeek_@day.DayOfWeek" value="@day.DayOfWeek" class="form-control" hidden>
+            <input id="OpenFrom_@day.DayOfWeek" name="OpenFrom_@day.DayOfWeek" value="@day.OpenFrom" class="form-control">
+            <input id="OpenTo_@day.DayOfWeek" name="OpenTo_@day.DayOfWeek" value="@day.OpenTo" class="form-control">
+            <input id="StoreId_@day.DayOfWeek" name="StoreId_@day.DayOfWeek" value="@day.StoreId" class="form-control" hidden>
+            @if (day.Closed == true)
+            {
+                <input type="checkbox" class="radio" id="Closed_@day.DayOfWeek" name="Closed_@day.DayOfWeek" checked /><label>Closed</label>
+            }
+            else if (day.Closed == false)
+            {
+                <input type="checkbox" class="radio" id="Closed_@day.DayOfWeek" name="Closed_@day.DayOfWeek" /><label>Closed</label>
+            }
+
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+
+}
+
+<button type="button" id="btnCreateWorkingHours" class="btn btn-primary">Create Working Hours</button>
+
+
+@section Scripts {
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+
+
+            $('#btnCreateWorkingHours').on("click", function () {
+
+
+                var jsonStringX = '[';
+
+
+                for (var i = 0; i < 7; i++) {
+                    var dayOfWeek = i;
+                    var openFrom = $('#OpenFrom_' + i).val();
+                    var openTo = $('#OpenTo_' + i).val();
+                    var closed = false;
+                    if ($('#Closed_' + i + ':checked').length > 0) {
+
+                        closed = true;
+                    }
+
+                    var storeId = $('#StoreId_' + i).val();
+
+                    if (i != 6) {
+                        jsonStringX += '{"dayOfWeek": ' + dayOfWeek + ', "openFrom": "' + openFrom.toString() + '", "openTo": "' + openTo.toString()
+                            + '", "closed": ' + closed + ', "storeId": ' + storeId + '}, ';
+
+
+                    }
+                    else {
+                        jsonStringX += '{"dayOfWeek": ' + dayOfWeek + ', "openFrom": "' + openFrom.toString() + '", "openTo": "' + openTo.toString()
+                            + '", "closed": ' + closed + ', "storeId": ' + storeId + '}]';
+                    }
+
+                }
+
+                var jsonObjectWH = JSON.parse(jsonStringX);
+
+
+                $.ajax({
+                    url: "https://localhost:44336/manage/CreateWorkingHours",
+                    method: 'post',
+                    data: { example: jsonObjectWH },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data == "true") {
+                            window.location.href = window.location.origin + '/manage/ListOfStores';
+                        }
+                    },
+                    error: function (err) {
+                        alert(err);
+                    }
+                });
+            });
+        })
+
+    </script>
+
+}

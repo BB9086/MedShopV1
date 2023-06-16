@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<div>@ViewBag.SessionId</div>
+
+<div id="welcome-messages"></div>
+<div class="card-deck">
+    @foreach (var product in Model)
+    {
+        <div class="card m-4">
+            <div class="card-header d-flex text-center h-100">
+                <h3>
+
+                    <a asp-controller="home" asp-action="products" asp-route-id="@product.DescriptionId" class="btn-link" style="color:black">
+                        @product.Name <span>@product.QuantityOfProduct</span>
+
+                    </a>
+                    @*ili:*@
+                    @*<a asp-controller="home" asp-action="products" asp-route-id='@(product.Name.Replace(" ", "_")+"_"+product.Quantity+"_"+product.ProductKey)' class="btn-link" style="color:black">
+                            @product.Name <span>@product.Quantity</span>
+
+                        </a>*@
+                    @*ili:*@
+                    @*@Html.ActionLink(product.Name+" "+product.Quantity,"details",new { id=(product.Name.Replace(" ", "_")+"_"+product.Quantity+"_"+product.ProductKey) }, new { @style = "color:black; font-weight: normal;" })*@
+                </h3>
+
+            </div>
+
+            <img class="card-img-top imageThumbnail" src="@Url.Content(@product.ImageSource)"
+                 asp-append-version="true" />
+            <div class="card-footer text-center">
+                <h3>@product.Price <span>RSD</span></h3>
+                <hr />
+                <a href="#" class="btn btn-primary">View</a>
+                @*<a href="#" class="btn btn-primary">Edit</a>
+                    <a href="#" class="btn btn-danger">Delete</a>*@
+            </div>
+        </div>
+    }
+</div>
+
+
+@section Scripts{
+
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/myHub.js"></script>
+
+
+}

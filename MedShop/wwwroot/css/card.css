@@ -1,0 +1,16 @@
+﻿.card {
+    /*border: 2px solid;*/
+    /*border-color: transparent;*/
+    border: 2px solid #91cff6;
+    border-radius: 8px;
+    padding: 2px;
+}
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    }
+
+.Hover {
+    border: 2px solid #24a0ed;
+    transition: border-color 1.5s ease;
+}
