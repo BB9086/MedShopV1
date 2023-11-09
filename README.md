@@ -53,13 +53,13 @@
 ![img6](https://user-images.githubusercontent.com/118169200/220552570-cf9ea086-994b-42c1-91d2-421dd177364a.png)
 
 ###### Reservation Page (Pickup or Delivery)
-![reserv](https://github.com/BB9086/MedShop/assets/118169200/e37d35e8-2a33-45c0-8b83-e86ee89614a1)
+![reservation](https://github.com/BB9086/MedShopV1/assets/118169200/9c91ca2a-ee09-49ff-831d-04ffc97b4ac1)
 
 ###### Customer Data
-![podkup](https://github.com/BB9086/MedShop/assets/118169200/fb6cf695-7696-44c8-9c78-eaf54d77ad47)
+![customerData](https://github.com/BB9086/MedShopV1/assets/118169200/a3a6a8fb-0301-4b22-ba23-7b6f09985c73)
 
 ###### Order Details
-![detalji](https://github.com/BB9086/MedShop/assets/118169200/e553f81d-9959-4d51-a4b1-e035f1ecc70d)
+![details](https://github.com/BB9086/MedShopV1/assets/118169200/fca93001-90bf-48ab-bdae-2e4fed854a2d)
 
 ###### Chat 
 ![Chat](https://user-images.githubusercontent.com/118169200/220607502-ebf1cda9-f822-46ed-bb3b-c5d6c66d9442.png)
